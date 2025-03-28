@@ -42,6 +42,9 @@ class EmptyTransform(T.Transform):
     def forward(self, *inputs):
         inputs = inputs if len(inputs) > 1 else inputs[0]
         return inputs
+    
+    def transform(self, *inputs):
+        return self.forward(*inputs)
 
 
 @register()
@@ -100,6 +103,9 @@ class ConvertBoxes(T.Transform):
         self.fmt = fmt
         self.normalize = normalize
 
+    def transform(self, inpt: Any, params: Dict[str, Any]) -> Any:
+        return self._transform(inpt, params)
+
     def _transform(self, inpt: Any, params: Dict[str, Any]) -> Any:  
         spatial_size = getattr(inpt, _boxes_keys[1])
         if self.fmt:
@@ -122,6 +128,9 @@ class ConvertPILImage(T.Transform):
         super().__init__()
         self.dtype = dtype
         self.scale = scale
+
+    def transform(self, inpt: Any, params: Dict[str, Any]) -> Any:
+        return self._transform(inpt, params)
 
     def _transform(self, inpt: Any, params: Dict[str, Any]) -> Any:  
         inpt = F.pil_to_tensor(inpt)
